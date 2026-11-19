@@ -39,7 +39,7 @@
 | `PUT /api/v1/users/{id}/roles/{role_id}` | admin | Назначить роль |
 | `DELETE /api/v1/users/{id}/roles/{role_id}` | admin | Снять роль |
 
-Все ошибки возвращаются в одном формате. Текст в `message` на английском:
+Все ошибки стандартизированы, пример:
 
 ```json
 {
