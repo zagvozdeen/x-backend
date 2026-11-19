@@ -34,7 +34,7 @@ class SecurityConfig {
     SecretKey jwtKey(@Value("${ums.jwt-secret}") String secret) {
         byte[] key = secret.getBytes(StandardCharsets.UTF_8);
         if (key.length < 32) {
-            throw new IllegalArgumentException("JWT_SECRET должен содержать минимум 32 байта");
+            throw new IllegalArgumentException("JWT_SECRET must be at least 32 bytes");
         }
         return new SecretKeySpec(key, "HmacSHA256");
     }
@@ -64,7 +64,7 @@ class SecurityConfig {
                 return;
             }
             if (email.isBlank() || password.isBlank() || password.length() < 8) {
-                throw new IllegalArgumentException("Укажите ADMIN_EMAIL и ADMIN_PASSWORD от 8 символов");
+                throw new IllegalArgumentException("Set ADMIN_EMAIL and an ADMIN_PASSWORD of at least 8 characters");
             }
             users.initializeAdmin(email, password);
         };
@@ -87,14 +87,14 @@ class SecurityConfig {
                             try {
                                 id = Long.parseLong(token.getSubject());
                             } catch (NumberFormatException ex) {
-                                throw new InvalidBearerTokenException("Неверный идентификатор пользователя");
+                                throw new InvalidBearerTokenException("Invalid user ID");
                             }
                             Object claim = token.getClaim("ver");
                             if (!(claim instanceof Number version)) {
-                                throw new InvalidBearerTokenException("Устаревший токен");
+                                throw new InvalidBearerTokenException("The token is outdated");
                             }
                             Actor actor = users.findActor(id, version.intValue())
-                                    .orElseThrow(() -> new InvalidBearerTokenException("Токен больше не действует"));
+                                    .orElseThrow(() -> new InvalidBearerTokenException("The token is no longer valid"));
                             var authorities = actor.roles().stream()
                                     .map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList();
                             return UsernamePasswordAuthenticationToken.authenticated(actor, null, authorities);

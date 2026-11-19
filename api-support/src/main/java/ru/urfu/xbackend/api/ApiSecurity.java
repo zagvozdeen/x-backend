@@ -55,7 +55,7 @@ public class ApiSecurity {
             @Override
             protected void rejectRequest(ServerHttpResponse response) throws IOException {
                 ApiErrors.write(response, json, HttpStatus.FORBIDDEN,
-                        "Запрос отклонён политикой CORS", "CORS_REJECTED");
+                        "Request rejected by the CORS policy", "CORS_REJECTED");
             }
         });
         return http
@@ -75,7 +75,7 @@ public class ApiSecurity {
         return (request, response, ex) -> {
             var output = new ServletServerHttpResponse(response);
             if (ex instanceof AuthenticationServiceException) {
-                ApiErrors.write(output, json, HttpStatus.SERVICE_UNAVAILABLE, "Сервис Users недоступен", null);
+                ApiErrors.write(output, json, HttpStatus.SERVICE_UNAVAILABLE, "The Users service is unavailable", null);
                 return;
             }
             bearer.commence(request, response, ex);

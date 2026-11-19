@@ -31,13 +31,13 @@ public class ApiErrors extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DuplicateKeyException.class)
     ResponseEntity<ApiResponse<Void>> duplicate() {
-        return response(HttpStatus.CONFLICT, "Запись с такими данными уже существует");
+        return response(HttpStatus.CONFLICT, "A record with these details already exists");
     }
 
     @ExceptionHandler(Exception.class)
     ResponseEntity<ApiResponse<Void>> unexpected(Exception ex) {
-        logger.error("Ошибка обработки запроса", ex);
-        return response(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера");
+        logger.error("Failed to process request", ex);
+        return response(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
     }
 
     @Override
@@ -78,14 +78,14 @@ public class ApiErrors extends ResponseEntityExceptionHandler {
 
     private static String defaultMessage(HttpStatusCode status) {
         return switch (status.value()) {
-            case 400 -> "Неверные параметры запроса";
-            case 401 -> "Требуется действительный Bearer-токен";
-            case 403 -> "Недостаточно прав";
-            case 404 -> "Маршрут не найден";
-            case 405 -> "HTTP-метод не поддерживается";
-            case 406 -> "Запрошенный формат ответа не поддерживается";
-            case 415 -> "Ожидается поддерживаемый Content-Type";
-            default -> status.is5xxServerError() ? "Внутренняя ошибка сервера" : "Не удалось обработать запрос";
+            case 400 -> "Invalid request parameters";
+            case 401 -> "A valid bearer token is required";
+            case 403 -> "Insufficient permissions";
+            case 404 -> "Route not found";
+            case 405 -> "HTTP method not allowed";
+            case 406 -> "Requested response format is not supported";
+            case 415 -> "Unsupported Content-Type";
+            default -> status.is5xxServerError() ? "Internal server error" : "Unable to process request";
         };
     }
 }

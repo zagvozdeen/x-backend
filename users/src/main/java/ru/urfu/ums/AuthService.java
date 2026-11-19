@@ -38,11 +38,11 @@ class AuthService {
         boolean matches = passwords.matches(password,
                 credentials.map(UserRepository.Credentials::passwordHash).orElse(dummyHash));
         if (!matches || credentials.isEmpty()) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "Неверный email или пароль");
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
         var account = credentials.get();
         if (account.confirmationId() != null) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Подтвердите email",
+            throw new ApiException(HttpStatus.FORBIDDEN, "Confirm your email address",
                     "EMAIL_NOT_CONFIRMED", new EmailConfirmation(account.confirmationId()));
         }
         Profile profile = users.findProfile(account.id());
@@ -56,7 +56,7 @@ class AuthService {
 
     void confirmEmail(ConfirmEmailRequest request) {
         if (!TRAINING_EMAIL_CODE.equals(request.code()) || !repository.confirmEmail(request.confirmationId())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Неверный код или ID подтверждения",
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid confirmation code or ID",
                     "INVALID_EMAIL_CONFIRMATION", null);
         }
     }
@@ -65,13 +65,13 @@ class AuthService {
         String current = UserService.requireBcryptLength(request.currentPassword());
         String next = UserService.requireBcryptLength(request.newPassword());
         String hash = repository.findPassword(actor.id())
-                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Войдите снова"));
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Sign in again"));
         if (!passwords.matches(current, hash)) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Неверный текущий пароль",
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Current password is incorrect",
                     "INVALID_CURRENT_PASSWORD", null);
         }
         if (!repository.updatePassword(actor.id(), hash, passwords.encode(next))) {
-            throw new ApiException(HttpStatus.CONFLICT, "Данные аккаунта изменились. Войдите снова");
+            throw new ApiException(HttpStatus.CONFLICT, "Your account details changed. Sign in again");
         }
     }
 }

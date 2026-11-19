@@ -44,10 +44,10 @@ class UserService {
 
     public List<UserSummary> list(String role, List<Long> ids, int limit, int offset) {
         if (ids != null && (ids.isEmpty() || ids.stream().anyMatch(id -> id == null || id <= 0))) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "ids должен содержать положительные ID");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "ids must contain positive IDs");
         }
         if (role != null && users.findRoles().stream().noneMatch(r -> r.name().equals(role))) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Неизвестная роль");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Unknown role");
         }
         return users.findAll(role, ids, limit, offset);
     }
@@ -61,7 +61,7 @@ class UserService {
     public Profile update(Actor actor, long id, ProfilePatch patch) {
         requireSelfOrAdmin(actor, id);
         if (patch.isEmpty()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Укажите поля для изменения");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Specify at least one field to update");
         }
         if (!users.update(id, patch, clean(patch.firstName()), clean(patch.lastName()),
                 patch.email() == null ? null : normalizeEmail(patch.email()))) {
@@ -88,7 +88,7 @@ class UserService {
             throw userNotFound();
         }
         if (users.findRoles().stream().noneMatch(role -> role.id() == roleId)) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "Роль не найдена");
+            throw new ApiException(HttpStatus.NOT_FOUND, "Role not found");
         }
         if (assign) {
             users.assignRole(id, roleId);
@@ -110,12 +110,12 @@ class UserService {
 
     private static void requireSelfOrAdmin(Actor actor, long id) {
         if (actor.id() != id && !actor.isAdmin()) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Недостаточно прав");
+            throw new ApiException(HttpStatus.FORBIDDEN, "Insufficient permissions");
         }
     }
 
     private static ApiException userNotFound() {
-        return new ApiException(HttpStatus.NOT_FOUND, "Пользователь не найден");
+        return new ApiException(HttpStatus.NOT_FOUND, "User not found");
     }
 
     static String normalizeEmail(String email) {
@@ -128,7 +128,7 @@ class UserService {
 
     static String requireBcryptLength(String password) {
         if (password.getBytes(StandardCharsets.UTF_8).length > 72) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Пароль должен занимать не более 72 байт в UTF-8");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Password must be at most 72 bytes in UTF-8");
         }
         return password;
     }

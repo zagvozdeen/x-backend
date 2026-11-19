@@ -41,11 +41,11 @@ class MessageService {
     private void checkAccess(long id, long actorId, boolean admin) {
         Message message = get(id);
         if (message.authorId() != actorId && !admin) {
-            throw new ApiException(HttpStatus.FORBIDDEN, "Недостаточно прав");
+            throw new ApiException(HttpStatus.FORBIDDEN, "Insufficient permissions");
         }
     }
 
     private static ApiException notFound() {
-        return new ApiException(HttpStatus.NOT_FOUND, "Сообщение не найдено");
+        return new ApiException(HttpStatus.NOT_FOUND, "Message not found");
     }
 }

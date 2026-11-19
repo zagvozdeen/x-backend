@@ -39,16 +39,16 @@ class UsersTokenIntrospector implements OpaqueTokenIntrospector {
                     .retrieve().body(IdentityResponse.class);
         } catch (HttpClientErrorException ex) {
             if (ex.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-                throw new BadOpaqueTokenException("Токен больше не действует");
+                throw new BadOpaqueTokenException("The token is no longer valid");
             }
-            throw new OAuth2IntrospectionException("Сервис Users не подтвердил запрос", ex);
+            throw new OAuth2IntrospectionException("The Users service could not verify the token", ex);
         } catch (RestClientException ex) {
-            throw new OAuth2IntrospectionException("Сервис Users недоступен", ex);
+            throw new OAuth2IntrospectionException("The Users service is unavailable", ex);
         }
 
         Identity identity = response == null ? null : response.data();
         if (identity == null || identity.id() <= 0 || identity.roles() == null) {
-            throw new OAuth2IntrospectionException("Некорректный ответ сервиса Users");
+            throw new OAuth2IntrospectionException("Invalid response from the Users service");
         }
         var authorities = identity.roles().stream()
                 .<GrantedAuthority>map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList();

@@ -5,6 +5,9 @@ spring:
     url: ${MESSAGES_DB_URL:jdbc:postgresql://127.0.0.1:5433/messages}
     username: ${MESSAGES_DB_USER:messages}
     password: ${MESSAGES_DB_PASSWORD:messages}
+  web:
+    locale: en
+    locale-resolver: fixed
   jackson:
     property-naming-strategy: SNAKE_CASE
 server:

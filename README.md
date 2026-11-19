@@ -39,13 +39,13 @@
 | `PUT /api/v1/users/{id}/roles/{role_id}` | admin | Назначить роль |
 | `DELETE /api/v1/users/{id}/roles/{role_id}` | admin | Снять роль |
 
-Все ошибки стандартизированы, пример:
+Все ошибки возвращаются в одном формате. Текст в `message` на английском:
 
 ```json
 {
   "code": 401,
   "error": "UNAUTHORIZED",
-  "message": "Требуется действительный Bearer-токен",
+  "message": "A valid bearer token is required",
   "data": null
 }
 ```
