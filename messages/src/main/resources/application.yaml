@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: messages
+  datasource:
+    url: ${MESSAGES_DB_URL:jdbc:postgresql://127.0.0.1:5433/messages}
+    username: ${MESSAGES_DB_USER:messages}
+    password: ${MESSAGES_DB_PASSWORD:messages}
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  port: 9001
+messages:
+  users-url: ${USERS_URL:http://127.0.0.1:9000}

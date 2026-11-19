@@ -1,0 +1,26 @@
+services:
+  db-users:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: users
+      POSTGRES_USER: users
+      POSTGRES_PASSWORD: users
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-users-data:/var/lib/postgresql
+
+  db-messages:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: messages
+      POSTGRES_USER: messages
+      POSTGRES_PASSWORD: messages
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-messages-data:/var/lib/postgresql
+
+volumes:
+  db-users-data:
+  db-messages-data:
